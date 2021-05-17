@@ -2,22 +2,23 @@
 
 ## input.txt
 
-| pid       | Arrival_time | CPU_time  |
-| --------- | ------------ | --------- |
-| \<entry\> | \<entry\>    | \<entry\> |
+| Arrival_time | CPU_time  | Dead_line(Only Real Time) |
+| ------------ | --------- | ------------------------- |
+| \<entry\>    | \<entry\> | \<entry\>                 |
 
 ## process struct
 
 ```c
 typedef struct process
 {
-    int process_id;   // 프로세스 번호
-    int arrive_time;  // 도착 시간
-    int cpu_time;     // 수행 시간
-    int remain_time;  // 수행 후 남아있는 시간
-    int waiting_time; // 대기 시간
-    int end_time;     // 종료 시간
-    int judge;        // 실행 판단 (1: 실행, 0: 종료)
+    int process_id;    // 프로세스 번호
+    int arrivalTime;   // 도착 시간
+    int burstDuration; // 수행 시간
+    int remain_time;   // 수행 후 남아있는 시간
+    int waiting_time;  // 대기 시간
+    int end_time;      // 종료 시간
+    int judge;         // 실행 판단 (1: 실행, 0: 종료)
+    int deadlineTime;  // 데드라인 (실시간)
 } process;
 ```
 
@@ -28,6 +29,7 @@ typedef struct process
 3. 프로세스 큐에(ready queue) 넣어준다.
 4. time quntum 은 `scanf` 를 통해 사용자에게 입력을 직접 받는다.
 5. RR 스케줄링을 통해 프로세스를 실행 시켜준다.
+6. Gantt Chart 를 통해 결과를 확인한다. (구현 예정)
 
 ## output.txt
 
