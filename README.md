@@ -31,6 +31,13 @@ typedef struct process
 5. RR 스케줄링을 통해 프로세스를 실행 시켜준다.
 6. Gantt Chart 를 통해 결과를 확인한다. (구현 예정)
 
+## How to Use
+
+```bash
+gcc <YOUR-PATH>/scheduler.c
+./a.out
+```
+
 ## output.txt
 
 | pid       | Arrival_time | CPU_time  | return time | reg return time |
