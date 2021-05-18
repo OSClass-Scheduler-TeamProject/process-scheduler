@@ -38,10 +38,6 @@ int read_file()
 
         a = strtok(c, ","); // ,로 구분해서 데이터를 읽는다.
 
-        // input.txt 의 마지막 줄에 보면 0 이 있는데 이걸 읽으면 끝으로 인식
-        if (*a == '0')
-            break;
-
         g_process[count].process_id = count + 1;
         g_process[count].arrival_time = atoi(a); // atoi: 문자열을 숫자로
 
