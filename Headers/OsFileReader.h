@@ -43,12 +43,12 @@ int read_file()
             break;
 
         g_process[count].process_id = count + 1;
-        g_process[count].arrivalTime = atoi(a); // atoi: 문자열을 숫자로
+        g_process[count].arrival_time = atoi(a); // atoi: 문자열을 숫자로
 
         a = strtok(NULL, ","); // 계속 이어서 자르고 싶은 경우 첫번째 인자에 NULL 을 넣어준다.
-        g_process[count].remain_time = g_process[count].burstDuration = atoi(a);
+        g_process[count].remain_time = g_process[count].burst_duration = atoi(a);
         a = strtok(NULL, ",");
-        g_process[count].deadlineTime = atoi(a);
+        g_process[count].deadline_time = atoi(a);
 
         g_process[count].waiting_time = 0;
         count++;

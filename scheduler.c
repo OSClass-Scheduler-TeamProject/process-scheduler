@@ -27,14 +27,14 @@ void RR(int cnt, Process s[], int quntum)
         for (int i = 0; i < cnt; i++)
         {
             // 지금 도착한 프로세스가 있는지 확인하고
-            if (g_process[i].arrivalTime == time)
+            if (g_process[i].arrival_time == time)
                 g_process[i].judge = 1; // 실행 여부를 1로 바꿔준다.
 
             // 실행 중인데 클럭인터럽트가 발생한 경우 -> 다음 프로세스로 넘어가야 한다는 소리
             if (g_process[i].judge == 1 && inter == 1)
             {
                 // 아직 할 작업이 남았고 && 가장 오래 기다린 프로세스의 대기시간보다 큰 대기시간을 가질때
-                if (g_process[i].burstDuration != 0 && g_process[i].waiting_time >= g_process[longWait].waiting_time)
+                if (g_process[i].burst_duration != 0 && g_process[i].waiting_time >= g_process[longWait].waiting_time)
                 {
                     // 지금 프로세스가 가장 오래 기다린 프로세스이므로 최신화
                     longWait = i;
@@ -46,7 +46,7 @@ void RR(int cnt, Process s[], int quntum)
         g_process[longWait].waiting_time = 0;
 
         // 실행 했으므로 수행 시간 -1
-        g_process[longWait].burstDuration--;
+        g_process[longWait].burst_duration--;
 
         // 타임 퀀텀 시간동안 카운트 할 임시 시간 지표 ++
         tmp_t++;
@@ -60,13 +60,13 @@ void RR(int cnt, Process s[], int quntum)
         }
 
         // 실행해야 할 시간이 남아있고 타임 퀀텀의 시간이 아직 안 되었으면 인터럽트를 발생시키지 않는다.
-        if (g_process[longWait].burstDuration != 0 && tmp_t != quntum)
+        if (g_process[longWait].burst_duration != 0 && tmp_t != quntum)
             inter = 0;
 
         else
         {
             // 수행시간이 0일 때 프로세스 실행 종료
-            if (g_process[longWait].burstDuration == 0)
+            if (g_process[longWait].burst_duration == 0)
             {
                 tm = longWait;           // 탈출 index 저장
                 g_process[tm].judge = 0; // 종료 상태로 변경
@@ -75,16 +75,16 @@ void RR(int cnt, Process s[], int quntum)
                  * 프로세스 정보 출력
                  * 프로세스 id, 도착시간, 수행시간, 종료시간, 반환시간 (종료시간 - 도착시간), 정규화된 반환시간 (반환시간 / 수행시간)
                 */
-                printf("%d\t\t %ds\t\t  %ds\t\t  %ds\t\t %ds\t\t %.2fs \n\n", s[tm].process_id, s[tm].arrivalTime, s[tm].burstDuration,
-                       time + 1, time + 1 - s[tm].arrivalTime, (time + 1 - s[tm].arrivalTime) / (double)s[tm].burstDuration);
+                printf("%d\t\t %ds\t\t  %ds\t\t  %ds\t\t %ds\t\t %.2fs \n\n", s[tm].process_id, s[tm].arrival_time, s[tm].burst_duration,
+                       time + 1, time + 1 - s[tm].arrival_time, (time + 1 - s[tm].arrival_time) / (double)s[tm].burst_duration);
                 fprintf(file2, "프로세스 id\t 도착시간\t 서비스 시간\t 종료 시간\t 반환 시간\t 정규화된 반환 시간\n");
-                fprintf(file2, "%d\t\t %ds\t\t  %ds\t\t  %ds\t\t %ds\t\t %.2fs \n\n", s[tm].process_id, s[tm].arrivalTime, s[tm].burstDuration,
-                        time + 1, time + 1 - s[tm].arrivalTime, (time + 1 - s[tm].arrivalTime) / (double)s[tm].burstDuration);
+                fprintf(file2, "%d\t\t %ds\t\t  %ds\t\t  %ds\t\t %ds\t\t %.2fs \n\n", s[tm].process_id, s[tm].arrival_time, s[tm].burst_duration,
+                        time + 1, time + 1 - s[tm].arrival_time, (time + 1 - s[tm].arrival_time) / (double)s[tm].arrival_time);
 
                 exit++; // 탈출한 프로세스 갯수 증가
 
-                average_wait += (time + 1 - s[tm].arrivalTime - s[tm].burstDuration);              // 평균 대기 시간 증가
-                average_banhwan += ((time + 1 - s[tm].arrivalTime) / (double)s[tm].burstDuration); // 평균 반환 시간 증가
+                average_wait += (time + 1 - s[tm].arrival_time - s[tm].burst_duration);              // 평균 대기 시간 증가
+                average_banhwan += ((time + 1 - s[tm].arrival_time) / (double)s[tm].burst_duration); // 평균 반환 시간 증가
             }
 
             tmp_t = 0; // 임시 시간 지표 초기화
@@ -118,7 +118,7 @@ int main()
     for (int i = 0; i < count; i++)
     {
         copy_sys[i] = g_process[i];
-        printf("%d %d %d \n", g_process[i].process_id, g_process[i].arrivalTime, g_process[i].burstDuration);
+        printf("%d %d %d \n", g_process[i].process_id, g_process[i].arrival_time, g_process[i].burst_duration);
     }
 
     printf("타임퀀텀을 입력하세요\n");
