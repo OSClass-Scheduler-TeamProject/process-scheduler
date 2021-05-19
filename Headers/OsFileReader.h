@@ -47,6 +47,11 @@ int read_file()
         g_process[count].deadline_time = atoi(a);
 
         g_process[count].waiting_time = 0;
+        g_process[count].judge = 2;
+        for (int i = 0; i < MAX_PROCESS; i++)
+        {
+            g_process[count].gantt[i] = ' ';
+        }
         count++;
     }
 
