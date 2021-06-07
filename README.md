@@ -27,7 +27,7 @@ typedef struct process
 1. input.txt 파일을 읽어온다.
 2. `,`으로 데이터를 구분해서 프로세스 정보를 저장한다.
 3. 프로세스 큐에(ready queue) 넣어준다.
-4. time quntum 은 `scanf` 를 통해 사용자에게 입력을 직접 받는다.
+4. time quantum 은 `scanf` 를 통해 사용자에게 입력을 직접 받는다.
 5. RR 스케줄링을 통해 프로세스를 실행 시켜준다.
 6. Gantt Chart 를 통해 결과를 확인한다. (구현 예정)
 

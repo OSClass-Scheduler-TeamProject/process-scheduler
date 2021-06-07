@@ -5,7 +5,7 @@
 #include "OsProcess.h"
 #include <time.h>
 
-void create_output_file(int quntum, Process *process_list, int average_time, double return_time)
+void create_output_file(int quantum, Process *process_list, int average_time, double return_time)
 {
     // 현재 시간 구하기
     time_t timer = time(NULL);
@@ -14,8 +14,8 @@ void create_output_file(int quntum, Process *process_list, int average_time, dou
     FILE *file2 = fopen("output.md", "w"); // 파일 출력 정의
     fprintf(file2, "# RR Scheduler Output File\n");
     fprintf(file2, "%d년 %d월 %d일 %d시 %d분 실행\n", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
-    fprintf(file2, "## Time Quntum\n");
-    fprintf(file2, "quntum: %d\n", quntum);
+    fprintf(file2, "## Time Quantum\n");
+    fprintf(file2, "quantum: %d\n", quantum);
 
     fprintf(file2, "\n---\n");
 
