@@ -8,17 +8,18 @@
 #include "Headers/OsGanttChart.h"
 #include "Headers/OsFileWriter.h"
 
-// Round Robin Scheduler
-int RR(int cnt, Process s[], int quantum)
+// Round Robin Scheduler - context_switch
+int context_switch_RR(FILE *output_file, int cnt, Process s[], int quantum)
 {
     int tm;                    // 탈출했을 때 프로세스 인덱스
     int time = 0;              // 시간
-    int tmp_t = 0;             // 임시 시간 변수
+    int tmp_t = -1;            // 임시 시간 변수
     int longWait = -1;         // 가장 오래기다린 프로세스 인덱스
     int inter = 1;             // clock 인터럽트 발생 여부 판단 변수
     int exit = 0;              // 종료 프로세스 개수
     int average_wait = 0;      // 평균 대기 시간
     double average_return = 0; // 평균 반환 시간
+    int context_switching = 0; // context switching 횟수
 
     // 모든 프로세스가 끝날 때까지 계속 반복된다.
     while (1)
@@ -44,15 +45,24 @@ int RR(int cnt, Process s[], int quantum)
 
         if (longWait == -1)
         {
-            time++;
+
             for (int i = 0; i < cnt; i++)
             {
                 s[i].gantt[time] = ' ';
             }
+            time++;
             continue;
         }
 
-        //
+        // context switching
+        if (tmp_t == -1)
+        {
+            tmp_t++;
+            context_switching++;
+            // context switching 시간을 고려하지 않는 경우 주석 처리
+            // time++;
+            // continue;
+        }
 
         if (g_process[longWait].judge == 1)
         {
@@ -100,8 +110,9 @@ int RR(int cnt, Process s[], int quantum)
                 average_return += ((time - s[tm].arrival_time) / (double)s[tm].burst_duration); // 평균 반환 시간 증가
             }
 
-            tmp_t = 0; // 임시 시간 지표 초기화
-            inter = 1; // 인터럽트 발생 여부 초기화
+            tmp_t = -1;    // 임시 시간 지표 초기화
+            inter = 1;     // 인터럽트 발생 여부 초기화
+            longWait = -1; // longWait index 초기화
         }
         time++; //시간 +1
 
@@ -110,34 +121,49 @@ int RR(int cnt, Process s[], int quantum)
     }
 
     // 출력 파일 생성
-    create_output_file(quantum, s, average_wait / cnt, average_return / cnt);
+    concat_output_file(output_file, quantum, cnt, s, average_wait / cnt, average_return / cnt, time, context_switching);
 
     return time;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    int quantum; // 타임 퀀텀
 
-    Process copy_sys[MAX_QUEUE] = {
-        0,
-    };
+    // argv[1]: quantum-max
+    // argv[2]: context 여부
 
-    int count = read_file(); // header file methods input.txt 파일을 읽고 프로세스 갯수를 리턴
-
-    for (int i = 0; i < count; i++)
+    if (argc < 2)
     {
-        copy_sys[i] = g_process[i];
+        printf("Input ERROR!\n");
+        printf("Usage: ./scheduler.out [quantum-max]\n");
+        return -1;
     }
 
-    printf("타임퀀텀을 입력하세요: ");
-    scanf("%d", &quantum);
+    FILE *output_file = create_output_file();
 
-    // 프로세스 스케줄러 실행 -> time: 종료되었을 때의 시간
-    int time = RR(count, copy_sys, quantum); // output.md 셍성
+    int time;
 
-    // 간트차트 그리기
-    draw_gantt_chart(copy_sys, count, time);
+    for (int quantum = 1; quantum < atoi(argv[1]); quantum++)
+    {
+        Process copy_sys[MAX_QUEUE] = {
+            0,
+        };
+
+        int count = read_file(); // header file methods input.txt 파일을 읽고 프로세스 갯수를 리턴
+
+        for (int i = 0; i < count; i++)
+        {
+            copy_sys[i] = g_process[i];
+        }
+
+        // context_switch 를 고려한 RR
+        time = context_switch_RR(output_file, count, copy_sys, quantum); // output.md 셍성
+
+        // 간트차트 그리기
+        // draw_gantt_chart(copy_sys, count, time, quantum);
+    }
+
+    finish_output_file(output_file);
 
     return 0;
 }
