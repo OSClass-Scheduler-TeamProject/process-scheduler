@@ -12,8 +12,6 @@
 */
 void draw_gantt_chart(Process *arr, int process_count, int max_time)
 {
-    int chart_option;
-
     for (int i = 0; i < process_count; i++)
     {
         if (arr[i].process_id < 10)
