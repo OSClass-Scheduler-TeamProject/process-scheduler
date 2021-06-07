@@ -9,7 +9,7 @@
 #include "Headers/OsFileWriter.h"
 
 // Round Robin Scheduler
-int RR(int cnt, Process s[], int quntum)
+int RR(int cnt, Process s[], int quantum)
 {
     int tm;                    // 탈출했을 때 프로세스 인덱스
     int time = 0;              // 시간
@@ -52,6 +52,8 @@ int RR(int cnt, Process s[], int quntum)
             continue;
         }
 
+        //
+
         if (g_process[longWait].judge == 1)
         {
 
@@ -77,8 +79,10 @@ int RR(int cnt, Process s[], int quntum)
             }
         }
 
+        //
+
         // 실행해야 할 시간이 남아있고 타임 퀀텀의 시간이 아직 안 되었으면 인터럽트를 발생시키지 않는다.
-        if (g_process[longWait].burst_duration != 0 && tmp_t != quntum)
+        if (g_process[longWait].burst_duration != 0 && tmp_t != quantum)
             inter = 0;
 
         else
@@ -106,14 +110,14 @@ int RR(int cnt, Process s[], int quntum)
     }
 
     // 출력 파일 생성
-    create_output_file(quntum, s, average_wait / cnt, average_return / cnt);
+    create_output_file(quantum, s, average_wait / cnt, average_return / cnt);
 
     return time;
 }
 
 int main()
 {
-    int quntum; // 타임 퀀텀
+    int quantum; // 타임 퀀텀
 
     Process copy_sys[MAX_QUEUE] = {
         0,
@@ -127,10 +131,10 @@ int main()
     }
 
     printf("타임퀀텀을 입력하세요: ");
-    scanf("%d", &quntum);
+    scanf("%d", &quantum);
 
     // 프로세스 스케줄러 실행 -> time: 종료되었을 때의 시간
-    int time = RR(count, copy_sys, quntum); // output.md 셍성
+    int time = RR(count, copy_sys, quantum); // output.md 셍성
 
     // 간트차트 그리기
     draw_gantt_chart(copy_sys, count, time);
