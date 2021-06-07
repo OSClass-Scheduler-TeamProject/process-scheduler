@@ -17,8 +17,8 @@ int context_switch_RR(FILE *output_file, int cnt, Process s[], int quantum)
     int longWait = -1;         // 가장 오래기다린 프로세스 인덱스
     int inter = 1;             // clock 인터럽트 발생 여부 판단 변수
     int exit = 0;              // 종료 프로세스 개수
-    int average_wait = 0;      // 평균 대기 시간
-    double average_return = 0; // 평균 반환 시간
+    long average_wait = 0;     // 평균 대기 시간
+    long average_return = 0;   // 평균 반환 시간
     int context_switching = 0; // context switching 횟수
 
     // 모든 프로세스가 끝날 때까지 계속 반복된다.

@@ -34,7 +34,7 @@ FILE *create_output_file()
     return output_file;
 }
 
-void concat_output_file(FILE *output_file, int quantum, int count, Process *process_list, int average_time, double return_time, int time, int context_switching)
+void concat_output_file(FILE *output_file, int quantum, int count, Process *process_list, double average_time, double return_time, int time, int context_switching)
 {
 
     if (optimal_result.return_time == return_time && optimal_result.average_time == average_time)
@@ -57,7 +57,7 @@ void concat_output_file(FILE *output_file, int quantum, int count, Process *proc
     // }
 
     //
-    fprintf(output_file, "|%d| %d회| %ds| %fs| %ds |\n", quantum, context_switching, average_time, return_time, time);
+    fprintf(output_file, "|%d| %d회| %.1fs| %.1fs| %ds |\n", quantum, context_switching, average_time, return_time, time);
 
     // fprintf(output_file, "\n---\n");
 
