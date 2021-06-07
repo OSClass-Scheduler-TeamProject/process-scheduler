@@ -14,20 +14,25 @@ void draw_gantt_chart(Process *arr, int process_count, int max_time)
 {
     for (int i = 0; i < process_count; i++)
     {
-        printf("PID %d |", arr[i].process_id);
+        if (arr[i].process_id < 10)
+            printf("PID 0%d |", arr[i].process_id);
+        else
+            printf("PID %d |", arr[i].process_id);
+
         for (int j = 0; j < arr[i].end_time + 1; j++)
         {
-            if (j > 9)
-                printf("%c  ", arr[i].gantt[j]);
-            else
-                printf("%c ", arr[i].gantt[j]);
+            printf(" %c ", arr[i].gantt[j]);
         }
         printf("\n");
     }
-    printf("       "); // PID %d 만큼 띄어쓰기
+    printf("        "); // PID %d 만큼 띄어쓰기
     for (int i = 0; i < max_time; i++)
-        printf("%d ", i);
-
+    {
+        if (i < 10)
+            printf("0%d ", i);
+        else
+            printf("%d ", i);
+    }
     printf("\n");
 }
 
