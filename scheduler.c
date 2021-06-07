@@ -11,14 +11,14 @@
 // Round Robin Scheduler
 int RR(int cnt, Process s[], int quntum)
 {
-    int tm;                     // 탈출했을 때 프로세스 인덱스
-    int time = 0;               // 시간
-    int tmp_t = 0;              // 임시 시간 변수
-    int longWait = 0;           // 가장 오래기다린 프로세스 인덱스
-    int inter = 1;              // clock 인터럽트 발생 여부 판단 변수
-    int exit = 0;               // 종료 프로세스 개수
-    int average_wait = 0;       // 평균 대기 시간
-    double average_banhwan = 0; // 평균 반환 시간
+    int tm;                    // 탈출했을 때 프로세스 인덱스
+    int time = 0;              // 시간
+    int tmp_t = 0;             // 임시 시간 변수
+    int longWait = -1;         // 가장 오래기다린 프로세스 인덱스
+    int inter = 1;             // clock 인터럽트 발생 여부 판단 변수
+    int exit = 0;              // 종료 프로세스 개수
+    int average_wait = 0;      // 평균 대기 시간
+    double average_return = 0; // 평균 반환 시간
 
     // 모든 프로세스가 끝날 때까지 계속 반복된다.
     while (1)
@@ -40,6 +40,16 @@ int RR(int cnt, Process s[], int quntum)
                     longWait = i;
                 }
             }
+        }
+
+        if (longWait == -1)
+        {
+            time++;
+            for (int i = 0; i < cnt; i++)
+            {
+                s[i].gantt[time] = ' ';
+            }
+            continue;
         }
 
         if (g_process[longWait].judge == 1)
@@ -82,8 +92,8 @@ int RR(int cnt, Process s[], int quntum)
 
                 exit++; // 탈출한 프로세스 갯수 증가
 
-                average_wait += (time - s[tm].arrival_time - s[tm].burst_duration);              // 평균 대기 시간 증가
-                average_banhwan += ((time - s[tm].arrival_time) / (double)s[tm].burst_duration); // 평균 반환 시간 증가
+                average_wait += (time - s[tm].arrival_time - s[tm].burst_duration);             // 평균 대기 시간 증가
+                average_return += ((time - s[tm].arrival_time) / (double)s[tm].burst_duration); // 평균 반환 시간 증가
             }
 
             tmp_t = 0; // 임시 시간 지표 초기화
@@ -96,7 +106,7 @@ int RR(int cnt, Process s[], int quntum)
     }
 
     // 출력 파일 생성
-    create_output_file(quntum, s, average_wait / cnt, average_banhwan / cnt);
+    create_output_file(quntum, s, average_wait / cnt, average_return / cnt);
 
     return time;
 }
@@ -120,7 +130,7 @@ int main()
     scanf("%d", &quntum);
 
     // 프로세스 스케줄러 실행 -> time: 종료되었을 때의 시간
-    int time = RR(count, copy_sys, quntum);
+    int time = RR(count, copy_sys, quntum); // output.md 셍성
 
     // 간트차트 그리기
     draw_gantt_chart(copy_sys, count, time);
