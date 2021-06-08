@@ -14,7 +14,7 @@ typedef struct Process
     int end_time;       // 종료 시간
     int judge;          // 실행 판단 (1: 실행, 0: 종료)
     int deadline_time;  // 데드라인 (실시간)
-    char gantt[MAX_PROCESS];
+    // char gantt[MAX_PROCESS];
 } Process;
 
 Process g_process[MAX_PROCESS];
