@@ -10,8 +10,9 @@
  * process_count: 프로세스의 갯수
  * max_time: 모든 프로세스가 종료되었을 때의 시간
 */
-void draw_gantt_chart(Process *arr, int process_count, int max_time)
+void draw_gantt_chart(Process *arr, int process_count, int max_time, int quantum)
 {
+    printf("quantum: %d\n", quantum);
     for (int i = 0; i < process_count; i++)
     {
         if (arr[i].process_id < 10)
