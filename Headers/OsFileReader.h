@@ -46,7 +46,7 @@ int read_file()
         a = strtok(NULL, ",");
         g_process[count].deadline_time = atoi(a);
 
-        g_process[count].waiting_time = 0;
+        g_process[count].waiting_time = g_process[count].stack_waiting_time = 0;
         g_process[count].judge = 2;
 
         count++;

@@ -9,7 +9,7 @@
 // #include "Headers/OsGanttChart.h"
 
 // Round Robin Scheduler - context_switch
-int context_switch_RR(FILE *output_file, int cnt, int quantum)
+int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantum)
 {
     int tm;                    // 탈출했을 때 프로세스 인덱스
     int time = 0;              // 시간
@@ -34,8 +34,15 @@ int context_switch_RR(FILE *output_file, int cnt, int quantum)
             // 실행 중인데 클럭인터럽트가 발생한 경우 -> 다음 프로세스로 넘어가야 한다는 소리
             if (g_process[i].judge == 1 && inter == 1)
             {
+
+                if (longWait == -1)
+                {
+                    if (g_process[i].remain_time != 0)
+                        longWait = i;
+                }
+
                 // 아직 할 작업이 남았고 && 가장 오래 기다린 프로세스의 대기시간보다 큰 대기시간을 가질때
-                if (g_process[i].remain_time != 0 && g_process[i].waiting_time >= g_process[longWait].waiting_time)
+                else if (g_process[i].remain_time != 0 && g_process[i].waiting_time >= g_process[longWait].waiting_time)
                 {
                     // 지금 프로세스가 가장 오래 기다린 프로세스이므로 최신화
                     longWait = i;
@@ -56,13 +63,14 @@ int context_switch_RR(FILE *output_file, int cnt, int quantum)
             tmp_t++;
             context_switching++;
             // context switching 시간을 고려하지 않는 경우 주석 처리
-            time++;
+            // time++;
             continue;
         }
 
         if (g_process[longWait].judge == 1)
         {
 
+            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, time, time + quantum);
             // 실행 후 대기시간 0으로 초기화
             g_process[longWait].waiting_time = 0;
 
@@ -77,7 +85,8 @@ int context_switch_RR(FILE *output_file, int cnt, int quantum)
             // 대기중인 프로세스 && 현재 비 실행 프로세스일 경우
             if (i != longWait && g_process[i].judge == 1)
             {
-                g_process[i].waiting_time++; // 대기시간 +1
+                g_process[i].waiting_time++;       // 대기시간 +1 -> 수행되면 초기화
+                g_process[i].stack_waiting_time++; // 쌓이는 대기 시간 증가
             }
         }
 
@@ -98,10 +107,9 @@ int context_switch_RR(FILE *output_file, int cnt, int quantum)
 
                 exit++; // 탈출한 프로세스 갯수 증가
 
-                average_wait += (time + 1 - g_process[tm].arrival_time - g_process[tm].burst_duration);             // 평균 대기 시간 증가
-                average_return += ((time + 1 - g_process[tm].arrival_time) / (double)g_process[tm].burst_duration); // 평균 반환 시간 증가
+                average_wait += g_process[tm].stack_waiting_time;                                  // 평균 대기 시간 증가
+                average_return += g_process[tm].stack_waiting_time + g_process[tm].burst_duration; // 평균 반환 시간 증가
             }
-
             tmp_t = -1;    // 임시 시간 지표 초기화
             inter = 1;     // 인터럽트 발생 여부 초기화
             longWait = -1; // longWait index 초기화
@@ -141,7 +149,14 @@ int main(int argc, char *argv[])
         int count = read_file(); // header file methods input.txt 파일을 읽고 프로세스 갯수를 리턴
 
         // context_switch 를 고려한 RR
-        time = context_switch_RR(output_file, count, quantum); // output.md 셍성
+        char filename[100] = "./execute/execute";
+        char number[100];
+        sprintf(number, "%d", quantum);
+
+        strcat(filename, number);
+        strcat(filename, ".csv");
+        FILE *execute_file = fopen(filename, "w");
+        time = context_switch_RR(output_file, execute_file, count, quantum); // output.md 셍성
     }
 
     finish_output_file(output_file);
