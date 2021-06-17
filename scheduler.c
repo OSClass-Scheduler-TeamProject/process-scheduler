@@ -73,8 +73,6 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
 
         if (g_process[longWait].judge == 1)
         {
-
-            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, time, time + quantum);
             // 실행 후 대기시간 0으로 초기화
             g_process[longWait].waiting_time = 0;
 
@@ -114,6 +112,8 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
                 average_wait += g_process[tm].stack_waiting_time;                                  // 평균 대기 시간 증가
                 average_return += g_process[tm].stack_waiting_time + g_process[tm].burst_duration; // 평균 반환 시간 증가
             }
+
+            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, time + 1 - quantum, time + 1);
             tmp_t = -1;    // 임시 시간 지표 초기화
             inter = 1;     // 인터럽트 발생 여부 초기화
             longWait = -1; // longWait index 초기화
