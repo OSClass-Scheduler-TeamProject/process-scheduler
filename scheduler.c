@@ -23,6 +23,9 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
     int context_switching = 0;  // context switching 횟수
     struct timeval stop, start; // 실제 수행 시간
 
+    int starting_time = -1;
+    int end_time = -1;
+
     gettimeofday(&start, NULL);
 
     // 모든 프로세스가 끝날 때까지 계속 반복된다.
@@ -73,6 +76,8 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
 
         if (g_process[longWait].judge == 1)
         {
+            if (starting_time == -1)
+                starting_time = time;
             // 실행 후 대기시간 0으로 초기화
             g_process[longWait].waiting_time = 0;
 
@@ -113,7 +118,12 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
                 average_return += g_process[tm].stack_waiting_time + g_process[tm].burst_duration; // 평균 반환 시간 증가
             }
 
-            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, time + 1 - quantum, time + 1);
+            end_time = time + 1;
+            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, starting_time, end_time);
+
+            starting_time = -1;
+            end_time = -1;
+
             tmp_t = -1;    // 임시 시간 지표 초기화
             inter = 1;     // 인터럽트 발생 여부 초기화
             longWait = -1; // longWait index 초기화
