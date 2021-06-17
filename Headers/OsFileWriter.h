@@ -35,7 +35,7 @@ FILE *create_output_file()
     return output_file;
 }
 
-void concat_output_file(FILE *output_file, int quantum, int count, double average_waiting_time, double average_return_time, int time, int context_switching)
+void concat_output_file(FILE *output_file, int quantum, int count, double average_waiting_time, double average_return_time, int time, int context_switching, long real_execute_time)
 {
 
     if (optimal_result.run_time == time && optimal_result.return_time == average_return_time && optimal_result.average_time == average_waiting_time)
@@ -63,6 +63,7 @@ void concat_output_file(FILE *output_file, int quantum, int count, double averag
     fprintf(output_file, "\n---\n");
 
     fprintf(output_file, "**총 실행 시간**: %d\n", time);
+    fprintf(output_file, "**실제 스케줄러 수행 시간**: %lu\n", real_execute_time);
     fprintf(output_file, "**평균 대기시간**: %.2f\n", average_waiting_time);
     fprintf(output_file, "**평균 반환시간**: %.2f\n", average_return_time);
 

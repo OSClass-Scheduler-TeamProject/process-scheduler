@@ -7,19 +7,23 @@
 #include "Headers/OsFileReader.h"
 #include "Headers/OsFileWriter.h"
 // #include "Headers/OsGanttChart.h"
+#include <sys/time.h>
 
 // Round Robin Scheduler - context_switch
 int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantum)
 {
-    int tm;                    // 탈출했을 때 프로세스 인덱스
-    int time = 0;              // 시간
-    int tmp_t = -1;            // 임시 시간 변수
-    int longWait = -1;         // 가장 오래기다린 프로세스 인덱스
-    int inter = 1;             // clock 인터럽트 발생 여부 판단 변수
-    int exit = 0;              // 종료 프로세스 개수
-    int average_wait = 0;      // 평균 대기 시간
-    double average_return = 0; // 평균 반환 시간
-    int context_switching = 0; // context switching 횟수
+    int tm;                     // 탈출했을 때 프로세스 인덱스
+    int time = 0;               // 시간
+    int tmp_t = -1;             // 임시 시간 변수
+    int longWait = -1;          // 가장 오래기다린 프로세스 인덱스
+    int inter = 1;              // clock 인터럽트 발생 여부 판단 변수
+    int exit = 0;               // 종료 프로세스 개수
+    int average_wait = 0;       // 평균 대기 시간
+    double average_return = 0;  // 평균 반환 시간
+    int context_switching = 0;  // context switching 횟수
+    struct timeval stop, start; // 실제 수행 시간
+
+    gettimeofday(&start, NULL);
 
     // 모든 프로세스가 끝날 때까지 계속 반복된다.
     while (1)
@@ -120,8 +124,11 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
             break;       // -> while문 종료
     }
 
+    gettimeofday(&stop, NULL);
+
+    long real_execute_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
     // 출력 파일 생성
-    concat_output_file(output_file, quantum, cnt, average_wait / cnt, average_return / cnt, time, context_switching);
+    concat_output_file(output_file, quantum, cnt, average_wait / cnt, average_return / cnt, time, context_switching, real_execute_time);
 
     return time;
 }
