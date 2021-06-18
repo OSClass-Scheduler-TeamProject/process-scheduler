@@ -1,4 +1,5 @@
 *.out
 *.txt
+*.csv
 output.md
 .DS_Store
