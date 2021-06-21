@@ -10,7 +10,7 @@
 #include <sys/time.h>
 
 // Round Robin Scheduler - context_switch
-int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantum)
+int context_switch_RR(int cnt, int quantum)
 {
     int tm;                     // 탈출했을 때 프로세스 인덱스
     int time = 0;               // 시간
@@ -26,8 +26,8 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
     int starting_time = -1;
     int end_time = -1;
 
-    gettimeofday(&start, NULL);
-
+    // gettimeofday(&start, NULL);
+    printf("\n======== 시간별 프로세스 1 ========\n");
     // 모든 프로세스가 끝날 때까지 계속 반복된다.
     while (1)
     {
@@ -119,7 +119,7 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
             }
 
             end_time = time + 1;
-            fprintf(execute_file, "%d,%d,%d\n", g_process[longWait].process_id, starting_time, end_time);
+            printf("PID: %d, 시작 시간: %d, 종료 시간: %d\n", g_process[longWait].process_id, starting_time, end_time);
 
             starting_time = -1;
             end_time = -1;
@@ -138,7 +138,7 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
 
     long real_execute_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
     // 출력 파일 생성
-    concat_output_file(output_file, quantum, cnt, average_wait / cnt, average_return / cnt, time, context_switching, real_execute_time);
+    // concat_output_file(output_file, quantum, cnt, average_wait / cnt, average_return / cnt, time, context_switching, real_execute_time);
 
     return time;
 }
@@ -146,37 +146,22 @@ int context_switch_RR(FILE *output_file, FILE *execute_file, int cnt, int quantu
 int main(int argc, char *argv[])
 {
 
-    // argv[1]: quantum-max
-    // argv[2]: context 여부
+    int time;
+    int time_quantum;
 
     if (argc < 2)
     {
         printf("Input ERROR!\n");
-        printf("Usage: ./scheduler.out [quantum-max]\n");
-        return -1;
+        printf("Usage: ./scheduler.out [time quantum]\n");
+        printf("Use default time quantum value : 45\n");
+        time_quantum = 45;
+    } else {
+        time_quantum = atoi(argv[1]);
     }
 
-    FILE *output_file = create_output_file();
 
-    int time;
-
-    for (int quantum = 1; quantum < atoi(argv[1]); quantum++)
-    {
-
-        int count = read_file(); // header file methods input.txt 파일을 읽고 프로세스 갯수를 리턴
-
-        // context_switch 를 고려한 RR
-        char filename[100] = "./execute/execute";
-        char number[100];
-        sprintf(number, "%d", quantum);
-
-        strcat(filename, number);
-        strcat(filename, ".csv");
-        FILE *execute_file = fopen(filename, "w");
-        time = context_switch_RR(output_file, execute_file, count, quantum); // output.md 셍성
-    }
-
-    finish_output_file(output_file);
-
+    int count = read_file(); // header file methods input.txt 파일을 읽고 프로세스 갯수를 리턴
+    // context_switch 를 고려한 RR
+    time = context_switch_RR(count, time_quantum); // output.md 셍성
     return 0;
 }
